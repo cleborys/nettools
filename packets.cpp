@@ -83,7 +83,8 @@ std::unique_ptr<const ICMPMessage> parse_at(const RawBytes &bytes,
   icmp_message->msgtype = static_cast<int>(icmp_header->type);
   icmp_message->code = static_cast<int>(icmp_header->code);
   icmp_message->checksum = static_cast<int>(icmp_header->checksum);
-  if (icmp_message->msgtype == ICMP_ECHO) {
+  if (icmp_message->msgtype == ICMP_ECHO ||
+      icmp_message->msgtype == ICMP_ECHOREPLY) {
     icmp_message->identifier =
         *reinterpret_cast<const int16_t *>(icmp_start + 4);
     icmp_message->sequence_number =

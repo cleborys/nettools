@@ -26,10 +26,12 @@ void Traceroute::read_until_empty(int timeout_seconds) {
       }
 
       auto &record_ptr{m_records[undelivered_message->sequence_number]};
-
       record_ptr->time_received = time_received;
       record_ptr->reply = std::move(parsed_message);
     } else if (parsed_message->msgtype == ICMP_ECHOREPLY) {
+      auto &record_ptr{m_records[parsed_message->sequence_number]};
+      record_ptr->time_received = time_received;
+      record_ptr->reply = std::move(parsed_message);
     }
   }
 }

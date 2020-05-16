@@ -4,8 +4,7 @@
 #include <map>
 #include <memory>
 #include <vector>
-#include "ICMPSocket.h"
-#include "UDPSocket.h"
+#include "Socket.h"
 #include "packets.h"
 
 class Traceroute {

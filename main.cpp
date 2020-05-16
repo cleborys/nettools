@@ -8,9 +8,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "ICMPSocket.h"
 #include "Traceroute.h"
-#include "UDPSocket.h"
 
 int main() {
   Traceroute tracer;
@@ -18,6 +16,7 @@ int main() {
 
   for (int i{1}; i < 15; ++i) {
     tracer.ping("172.217.19.78", i);
+    tracer.read_until_empty();
   }
   tracer.read_until_empty(1);
 
