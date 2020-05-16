@@ -20,8 +20,21 @@ UDPSocket::~UDPSocket() {
   }
 }
 
+void UDPSocket::set_ttl(const int ttl) {
+  if (setsockopt(m_socket, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0) {
+    std::cerr << "Failed to set ttl to " << ttl << '\n';
+  }
+}
+
 void UDPSocket::send_string(std::string message, std::string destination_ip,
                             int destination_port) {
+  auto message_cstr = message.c_str();
+  send_raw(&message_cstr, strlen(message_cstr), destination_ip,
+           destination_port);
+}
+
+void UDPSocket::send_raw(void *message_begin, size_t message_length,
+                         std::string destination_ip, int destination_port) {
   in_addr destination;
   if (!inet_aton(destination_ip.c_str(), &destination)) {
     std::cerr << "Failed to parse IP address " << destination_ip << '\n';
@@ -42,8 +55,7 @@ void UDPSocket::send_string(std::string message, std::string destination_ip,
          remote_host->h_addr, remote_host->h_length);
   destination_sockaddr.sin_port = htons(destination_port);
 
-  auto message_cstr = message.c_str();
-  if (sendto(m_socket, message_cstr, strlen(message_cstr), 0,
+  if (sendto(m_socket, message_begin, message_length, 0,
              (sockaddr *)&destination_sockaddr,
              sizeof(destination_sockaddr)) < 0) {
     std::cerr << "Failed to send\n";

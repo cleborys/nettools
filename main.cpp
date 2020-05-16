@@ -4,29 +4,23 @@
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 #include <sys/socket.h>
+#include <unistd.h>
 #include <cstring>
 #include <iostream>
 
 #include "ICMPSocket.h"
+#include "Traceroute.h"
 #include "UDPSocket.h"
 
 int main() {
-  UDPSocket send_socket{};
-  ICMPSocket receive_socket{};
-
+  Traceroute tracer;
   std::string destination{"172.217.19.78"};
-  int port{80};
 
-  send_socket.send_string("hello", "172.217.19.78", 80);
-  ICMPMessage received_msg{receive_socket.read_next()};
-  std::cout << received_msg;
+  for (int i{1}; i < 15; ++i) {
+    tracer.ping("172.217.19.78", i);
+  }
+  tracer.read_until_empty(1);
 
-  send_socket.send_string("hello", "172.217.19.78", 80);
-  received_msg = receive_socket.read_next();
-  std::cout << received_msg;
-
-  send_socket.send_string("hello", "172.217.19.78", 80);
-  received_msg = receive_socket.read_next();
-  std::cout << received_msg;
+  tracer.print_records();
   return 0;
 }

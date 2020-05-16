@@ -1,8 +1,10 @@
 #include "ICMPSocket.h"
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 
@@ -17,64 +19,53 @@ ICMPSocket::ICMPSocket() {
   }
 }
 
-ICMPMessage ICMPSocket::read_next() {
-  char buffer[BUFFER_SIZE]{};
-  int received_length{};
-  sockaddr_in received_sockaddr{};
-  socklen_t received_sockaddr_length{sizeof(received_sockaddr)};
+bool ICMPSocket::messages_available(int timeout_seconds) {
+  timeval timeout;
+  timeout.tv_sec = timeout_seconds;
+  timeout.tv_usec = 0;
 
-  received_length =
-      recvfrom(m_socket, buffer, BUFFER_SIZE - 1, 0,
-               (sockaddr *)(&received_sockaddr), &received_sockaddr_length);
+  fd_set read_sockets;
+  FD_SET(m_socket, &read_sockets);
+  return (select(m_socket + 1, &read_sockets, nullptr, nullptr, &timeout) > 0);
+}
 
-  if (received_length <= 0) {
-    std::cout << "Nothing to read, length: " << received_length << '\n';
-    return ICMPMessage{};
+std::unique_ptr<RawBytes> ICMPSocket::read_next() {
+  std::unique_ptr<RawBytes> buffer{std::make_unique<RawBytes>(BUFFER_SIZE)};
+  buffer->actual_size = recv(m_socket, buffer->get_bytes(), BUFFER_SIZE - 1, 0);
+  return std::move(buffer);
+}
+
+void ICMPSocket::send_raw(void *message_begin, size_t message_length,
+                          std::string destination_ip, int destination_port) {
+  in_addr destination;
+  if (!inet_aton(destination_ip.c_str(), &destination)) {
+    std::cerr << "Failed to parse IP address " << destination_ip << '\n';
+    return;
   }
 
-  iphdr *ip_header{reinterpret_cast<iphdr *>(buffer)};
-  in_addr source, dest;
-  source.s_addr = ip_header->saddr;
-  dest.s_addr = ip_header->daddr;
-  ICMPMessage icmp_message;
+  hostent *remote_host;
+  remote_host = gethostbyaddr(static_cast<const void *>(&destination),
+                              sizeof(destination), AF_INET);
+  if (!remote_host) {
+    std::cerr << "Failed to get host " << destination_ip << "by address\n";
+    return;
+  }
 
-  icmp_message.ip_header.source = std::string(inet_ntoa(source));
-  icmp_message.ip_header.destination = std::string(inet_ntoa(dest));
-  icmp_message.ip_header.ttl = static_cast<int>(ip_header->ttl);
+  sockaddr_in destination_sockaddr{};
+  destination_sockaddr.sin_family = AF_INET;
+  memcpy(static_cast<void *>(&destination_sockaddr.sin_addr),
+         remote_host->h_addr, remote_host->h_length);
+  destination_sockaddr.sin_port = htons(destination_port);
 
-  icmphdr *icmp_header =
-      reinterpret_cast<icmphdr *>((char *)ip_header + (4 * ip_header->ihl));
-
-  icmp_message.msgtype = static_cast<int>(icmp_header->type);
-  icmp_message.code = static_cast<int>(icmp_header->code);
-  icmp_message.checksum = static_cast<int>(icmp_header->checksum);
-
-  return icmp_message;
+  if (sendto(m_socket, message_begin, message_length, 0,
+             (sockaddr *)&destination_sockaddr,
+             sizeof(destination_sockaddr)) < 0) {
+    std::cerr << "Failed to send\n";
+  }
 }
 
-std::ostream &operator<<(std::ostream &ostream,
-                         const ICMPMessage &icmp_message) {
-  ostream << "ICMP Message Start\n"
-          << "--------------\n"
-          << icmp_message.ip_header << "messagetype=" << icmp_message.msgtype
-          << '\n'
-          << "code=" << icmp_message.code << '\n'
-          << "checksum=" << icmp_message.checksum << '\n'
-          << "--------------\n"
-          << "ICMP Message End\n";
-
-  return ostream;
-}
-
-std::ostream &operator<<(std::ostream &ostream,
-                         const IPHeaderData &ip_header_data) {
-  ostream << "IP Header Start\n"
-          << "-------\n"
-          << "source: " << ip_header_data.source << '\n'
-          << "destination: " << ip_header_data.destination << '\n'
-          << "ttl: " << ip_header_data.ttl << '\n'
-          << "-------\n"
-          << "IP Header End\n";
-
-  return ostream;
+void ICMPSocket::set_ttl(const int ttl) {
+  if (setsockopt(m_socket, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0) {
+    std::cerr << "Failed to set ttl to " << ttl << '\n';
+  }
 }
