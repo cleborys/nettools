@@ -15,6 +15,7 @@ void Traceroute::read_until_empty(int timeout_seconds) {
     std::unique_ptr<const ICMPMessage> parsed_message{
         parse_at(*received_bytes, 0)};
 
+    int sequence_number{-1};
     if (parsed_message->msgtype == ICMP_TIME_EXCEEDED) {
       size_t body_start{parsed_message->ip_header.byte_length +
                         ICMP_HEADER_LENGTH};
@@ -25,26 +26,32 @@ void Traceroute::read_until_empty(int timeout_seconds) {
         continue;
       }
 
-      auto &record_ptr{m_records[undelivered_message->sequence_number]};
-      record_ptr->time_received = time_received;
-      record_ptr->reply = std::move(parsed_message);
+      sequence_number = undelivered_message->sequence_number;
     } else if (parsed_message->msgtype == ICMP_ECHOREPLY) {
-      auto &record_ptr{m_records[parsed_message->sequence_number]};
-      record_ptr->time_received = time_received;
+      sequence_number = parsed_message->sequence_number;
+    }
+
+    if (sequence_number != -1) {
+      auto record_ptr{std::make_unique<ReceivedRecord>()};
       record_ptr->reply = std::move(parsed_message);
+      record_ptr->time = time_received;
+      m_received.insert(std::make_pair(sequence_number, std::move(record_ptr)));
     }
   }
 }
 
 void Traceroute::print_records() {
-  for (auto const &entry : m_records) {
-    const std::unique_ptr<Record> &record_ptr{entry.second};
-    std::cout << "To " << record_ptr->destination
-              << " with ttl=" << record_ptr->ttl << " received ";
-    if (record_ptr->reply) {
+  for (auto const &entry : m_sent) {
+    const std::unique_ptr<const SentRecord> &sent_record_ptr{entry.second};
+    std::cout << "To " << sent_record_ptr->destination
+              << " with ttl=" << sent_record_ptr->ttl << " received ";
+
+    auto iterator{m_received.find(sent_record_ptr->sequence_number)};
+    if (iterator != m_received.end()) {
+      auto &received_record_ptr{iterator->second};
       auto delay_ms{std::chrono::duration_cast<std::chrono::milliseconds>(
-          record_ptr->time_received - record_ptr->time_sent)};
-      std::cout << "reply from " << record_ptr->reply->ip_header.source
+          received_record_ptr->time - sent_record_ptr->time)};
+      std::cout << "reply from " << received_record_ptr->reply->ip_header.source
                 << " after " << delay_ms.count() << "ms.\n";
     } else {
       std::cout << "no reply.\n";
@@ -60,11 +67,11 @@ void Traceroute::ping(std::string destination_ip, int ttl) {
                     destination_ip, 33434);
   auto time_sent{std::chrono::high_resolution_clock::now()};
 
-  auto record{std::make_unique<Record>()};
-  record->time_sent = time_sent;
+  auto record{std::make_unique<SentRecord>()};
+  record->time = time_sent;
   record->destination = destination_ip;
   record->ttl = ttl;
   record->sequence_number = ping_id;
 
-  m_records.insert(std::make_pair(ping_id, std::move(record)));
+  m_sent.insert(std::make_pair(ping_id, std::move(record)));
 }
