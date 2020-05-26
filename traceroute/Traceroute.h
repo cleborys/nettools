@@ -4,8 +4,8 @@
 #include <map>
 #include <memory>
 #include <vector>
-#include "Socket.h"
-#include "packets.h"
+#include "../Socket.h"
+#include "../packets.h"
 
 class Traceroute {
  public:
