@@ -31,6 +31,9 @@ find_package(Threads)
 set(test_files
     ICMPTest.cpp
     IPPacketTest.cpp
+    DNSTest.cpp
+    DNSQuerierTest.cpp
+    TracerouteIntegrationTest.cpp
     )
 
 add_executable(tests ${test_files} main.cpp)

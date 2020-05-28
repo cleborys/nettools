@@ -24,3 +24,24 @@ TEST(ICMPTest, parse_non_icmp_ipproto) {
 
   EXPECT_FALSE(icmp_ptr);
 }
+
+TEST(ICMPTest, parse_empty) {
+  RawBytes raw_bytes{""};
+  std::unique_ptr<const ICMPMessage> icmp_ptr{parse_icmp_at(raw_bytes, 0)};
+
+  EXPECT_FALSE(icmp_ptr);
+}
+
+TEST(ICMPTest, generate_echo_request) {
+  int sequence_number{123};
+  int identifier{456};
+
+  auto echo_request_ptr{generate_echo_request(sequence_number, identifier)};
+
+  int expected_checksum{64948};
+
+  EXPECT_EQ(echo_request_ptr->icmp_type, ICMP_ECHO);
+  EXPECT_EQ(echo_request_ptr->icmp_seq, sequence_number);
+  EXPECT_EQ(echo_request_ptr->icmp_id, identifier);
+  EXPECT_EQ(echo_request_ptr->icmp_cksum, expected_checksum);
+}

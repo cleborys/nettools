@@ -17,6 +17,7 @@ IPHeaderData::IPHeaderData(const iphdr &raw_header)
 IPHeaderData::IPHeaderData(const char *buffer)
     : IPHeaderData(*reinterpret_cast<const iphdr *>(buffer)) {}
 
+// LCOV_EXCL_START
 std::ostream &operator<<(std::ostream &ostream,
                          const IPHeaderData &ip_header_data) {
   ostream << "IP Header Start\n"
@@ -29,6 +30,7 @@ std::ostream &operator<<(std::ostream &ostream,
 
   return ostream;
 }
+// LCOV_EXCL_STOP
 
 RawBytes::RawBytes(size_t max_size)
     : max_size{max_size},

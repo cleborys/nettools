@@ -9,7 +9,7 @@ make
 ```
 
 ### Run tests ###
-Having built as abive, run
+Having built as above, run
 ```
 ctest -V
 ```

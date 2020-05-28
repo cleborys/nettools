@@ -4,11 +4,11 @@
 
 class DNSQuerier {
  public:
-  void query(const std::string &domain_name);
+  std::string query(const std::string &domain_name);
 
  private:
   void send_query(const std::string &domain_name);
-  void parse_reply(int domain_name_length);
+  std::string parse_reply(int domain_name_length);
   UDPSocket m_socket;
 };
 

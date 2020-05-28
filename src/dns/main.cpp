@@ -3,7 +3,7 @@
 
 int main() {
   DNSQuerier query_interface;
-  query_interface.query("borys.dk.");
+  query_interface.query("www.google.com.");
 
   return 0;
 }

@@ -68,6 +68,7 @@ size_t copy_dns_name(const unsigned char *reader, const unsigned char *buffer,
   return advance_count;
 }
 
+// LCOV_EXCL_START
 std::ostream &operator<<(std::ostream &ostream, const DnsHeader &dns_header) {
   ostream << "questions: " << ntohs(dns_header.question_count) << '\n'
           << "answers: " << ntohs(dns_header.answer_count) << '\n'
@@ -76,7 +77,9 @@ std::ostream &operator<<(std::ostream &ostream, const DnsHeader &dns_header) {
           << '\n';
   return ostream;
 }
+// LCOV_EXCL_STOP
 
+// LCOV_EXCL_START
 std::ostream &operator<<(std::ostream &ostream,
                          const ResourceRecordHeader &record_header) {
   ostream << "class: " << ntohs(record_header.record_class) << '\n'
@@ -84,3 +87,4 @@ std::ostream &operator<<(std::ostream &ostream,
           << "ttl: " << ntohl(record_header.ttl) << '\n'
           << "length: " << ntohs(record_header.resource_data_length) << '\n';
 }
+// LCOV_EXCL_STOP

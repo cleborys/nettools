@@ -38,6 +38,24 @@ void Traceroute::read_until_empty(int timeout_seconds) {
   }
 }
 
+void Traceroute::ping(std::string destination_ip, int ttl) {
+  int ping_id{++last_ping_id};
+  m_socket.set_ttl(ttl);
+  auto echo_request_ptr{generate_echo_request(ping_id, getpid())};
+  m_socket.send_raw(echo_request_ptr.get(), sizeof(*echo_request_ptr),
+                    destination_ip, 33434);
+  auto time_sent{std::chrono::high_resolution_clock::now()};
+
+  auto record{std::make_unique<SentRecord>()};
+  record->time = time_sent;
+  record->destination = destination_ip;
+  record->ttl = ttl;
+  record->sequence_number = ping_id;
+
+  m_sent.insert(std::make_pair(ping_id, std::move(record)));
+}
+
+// LCOV_EXCL_START
 void Traceroute::print_records() {
   for (auto const &entry : m_sent) {
     const std::unique_ptr<const SentRecord> &sent_record_ptr{entry.second};
@@ -56,20 +74,4 @@ void Traceroute::print_records() {
     }
   }
 }
-
-void Traceroute::ping(std::string destination_ip, int ttl) {
-  int ping_id{++last_ping_id};
-  m_socket.set_ttl(ttl);
-  auto echo_request_ptr{generate_echo_request(ping_id, getpid())};
-  m_socket.send_raw(echo_request_ptr.get(), sizeof(*echo_request_ptr),
-                    destination_ip, 33434);
-  auto time_sent{std::chrono::high_resolution_clock::now()};
-
-  auto record{std::make_unique<SentRecord>()};
-  record->time = time_sent;
-  record->destination = destination_ip;
-  record->ttl = ttl;
-  record->sequence_number = ping_id;
-
-  m_sent.insert(std::make_pair(ping_id, std::move(record)));
-}
+// LCOV_EXCL_STOP

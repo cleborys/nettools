@@ -64,6 +64,7 @@ std::unique_ptr<icmp> generate_echo_request(int sequence_number,
   return packet;
 }
 
+// LCOV_EXCL_START
 std::ostream &operator<<(std::ostream &ostream,
                          const ICMPMessage &icmp_message) {
   ostream << "ICMP Message Start\n"
@@ -79,3 +80,4 @@ std::ostream &operator<<(std::ostream &ostream,
 
   return ostream;
 }
+// LCOV_EXCL_STOP

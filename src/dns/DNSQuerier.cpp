@@ -5,9 +5,9 @@
 #include <iostream>
 #include "dns.h"
 
-void DNSQuerier::query(const std::string &domain_name) {
+std::string DNSQuerier::query(const std::string &domain_name) {
   send_query(domain_name);
-  parse_reply(domain_name.length());
+  return parse_reply(domain_name.length());
 }
 
 void DNSQuerier::send_query(const std::string &domain_name) {
@@ -42,7 +42,7 @@ void DNSQuerier::send_query(const std::string &domain_name) {
   m_socket.send_raw(buffer, message_length, "8.8.8.8", 53);
 }
 
-void DNSQuerier::parse_reply(int domain_name_length) {
+std::string DNSQuerier::parse_reply(int domain_name_length) {
   auto received_bytes = m_socket.read_next();
   const DnsHeader *received_dns_header =
       reinterpret_cast<const DnsHeader *>(received_bytes->buffer.get());
@@ -70,4 +70,5 @@ void DNSQuerier::parse_reply(int domain_name_length) {
   sockaddr_in addr{};
   addr.sin_addr.s_addr = *reinterpret_cast<long *>(rdata);
   std::cout << name << " resolved to " << inet_ntoa(addr.sin_addr) << '\n';
+  return std::string{inet_ntoa(addr.sin_addr)};
 }
