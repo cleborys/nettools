@@ -27,15 +27,17 @@ void Socket::set_ttl(const int ttl) {
   }
 }
 
-void Socket::send_string(std::string message, std::string destination_ip,
-                         int destination_port) {
+void DatagramSocket::send_string(const std::string &message,
+                                 const std::string &destination_ip,
+                                 int destination_port) {
   auto message_cstr = message.c_str();
   send_raw(&message_cstr, strlen(message_cstr), destination_ip,
            destination_port);
 }
 
-void Socket::send_raw(void *message_begin, size_t message_length,
-                      std::string destination_ip, int destination_port) {
+void DatagramSocket::send_raw(void *message_begin, size_t message_length,
+                              const std::string &destination_ip,
+                              int destination_port) {
   in_addr destination;
   if (!inet_aton(destination_ip.c_str(), &destination)) {
     std::cerr << "Failed to parse IP address " << destination_ip << '\n';
@@ -63,13 +65,14 @@ void Socket::send_raw(void *message_begin, size_t message_length,
   }
 }
 
-std::unique_ptr<RawBytes> Socket::read_next() {
+std::unique_ptr<RawBytes> DatagramSocket::read_next() {
   std::unique_ptr<RawBytes> buffer{std::make_unique<RawBytes>(BUFFER_SIZE)};
-  buffer->actual_size = recv(m_socket, buffer->get(), BUFFER_SIZE - 1, 0);
+  buffer->actual_size =
+      recv(m_socket, buffer->get_buffer(), BUFFER_SIZE - 1, 0);
   return std::move(buffer);
 }
 
-bool Socket::messages_available(int timeout_seconds) {
+bool DatagramSocket::messages_available(int timeout_seconds) {
   timeval timeout;
   timeout.tv_sec = timeout_seconds;
   timeout.tv_usec = 0;

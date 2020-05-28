@@ -10,6 +10,8 @@ set(LIBRARY_FILES
         IPPacket.h
         Socket.cpp
         Socket.h
+        TCPSocket.cpp
+        TCPSocket.h
         ICMPMessage.cpp
         ICMPMessage.h
         traceroute/Traceroute.cpp
@@ -27,3 +29,6 @@ target_link_libraries (traceroute ${CMAKE_THREAD_LIBS_INIT} libnettools)
 
 add_executable(dns dns/main.cpp )
 target_link_libraries(dns libnettools)
+
+add_executable(tcp_client tcp_client/main.cpp )
+target_link_libraries(tcp_client libnettools)

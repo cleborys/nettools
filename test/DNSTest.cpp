@@ -25,7 +25,8 @@ TEST(DNSTest, read_hostname_without_jump) {
   RawBytes raw_bytes{
       "ee 4d 81 80 00 01 00 01 00 00 00 00 05 62 6f 72 79 73 02 64 6b 00 00 01 "
       "00 01 c0 0c 00 01 00 01 00 00 0e 0f 00 04 00 50 d4 2f e5 85"};
-  auto buffer_start{reinterpret_cast<const unsigned char *>(raw_bytes.get())};
+  auto buffer_start{
+      reinterpret_cast<const unsigned char *>(raw_bytes.get_buffer())};
   auto name_start{buffer_start + 12};
 
   std::string name_output{};
@@ -49,8 +50,8 @@ TEST(DNSTest, read_hostname_with_jump) {
       "73 03 6e 65 74 00 c0 1c 00 02 00 01 00 02 a3 00 "
       "00 04 01 62 c0 2a c0 1c 00 02 00 01 00 02 a3 00 "
       "00 04 01 63 c0 2a c0 1c 00 02 00 01 00 02 a3 00 "};
-  auto buffer_start{reinterpret_cast<const unsigned char *>(raw_bytes.get()) +
-                    42};
+  auto buffer_start{
+      reinterpret_cast<const unsigned char *>(raw_bytes.get_buffer()) + 42};
   auto name_start{buffer_start + 114 - 42};
 
   std::string name_output{};

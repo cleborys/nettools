@@ -17,7 +17,7 @@ std::unique_ptr<const ICMPMessage> parse_icmp_at(const RawBytes &bytes,
     return std::unique_ptr<ICMPMessage>(nullptr);
   }
 
-  const char *buffer{bytes.get() + start};
+  const char *buffer{bytes.get_buffer() + start};
   IPHeaderData ip_header_data{buffer};
   if (ip_header_data.protocol != IPPROTO_ICMP) {
     std::cerr << "Wrong protocol: " << bytes.actual_size

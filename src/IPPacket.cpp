@@ -35,7 +35,8 @@ std::ostream &operator<<(std::ostream &ostream,
 RawBytes::RawBytes(size_t max_size)
     : max_size{max_size},
       actual_size{0},
-      buffer{std::make_unique<char[]>(max_size)} {}
+      buffer{std::make_unique<char[]>(max_size + 1)} {
+}  // use one more byte to double as a c_string
 
 RawBytes::RawBytes(const std::string &hex_byte_string)
     : RawBytes((hex_byte_string.size() + 1) / 3) {

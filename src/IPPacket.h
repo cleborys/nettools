@@ -25,8 +25,8 @@ struct RawBytes {
 
   RawBytes(size_t max_size);
   RawBytes(const std::string &hex_byte_string);
-  char *get() { return buffer.get(); }
-  const char *get() const { return buffer.get(); }
+  char *get_buffer() { return buffer.get(); }
+  const char *get_buffer() const { return buffer.get(); }
 };
 
 std::ostream &operator<<(std::ostream &ostream,
