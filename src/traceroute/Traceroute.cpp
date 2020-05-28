@@ -2,8 +2,6 @@
 #include <unistd.h>
 #include <iostream>
 
-const size_t ICMP_HEADER_LENGTH{8};
-
 void Traceroute::read_until_empty(int timeout_seconds) {
   while (m_socket.messages_available(timeout_seconds)) {
     auto time_received{std::chrono::high_resolution_clock::now()};
@@ -13,14 +11,14 @@ void Traceroute::read_until_empty(int timeout_seconds) {
       continue;
     }
     std::unique_ptr<const ICMPMessage> parsed_message{
-        parse_at(*received_bytes, 0)};
+        parse_icmp_at(*received_bytes, 0)};
 
     int sequence_number{-1};
     if (parsed_message->msgtype == ICMP_TIME_EXCEEDED) {
       size_t body_start{parsed_message->ip_header.byte_length +
                         ICMP_HEADER_LENGTH};
       std::unique_ptr<const ICMPMessage> undelivered_message{
-          parse_at(*received_bytes, body_start)};
+          parse_icmp_at(*received_bytes, body_start)};
 
       if (undelivered_message->identifier != getpid()) {
         continue;

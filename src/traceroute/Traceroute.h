@@ -5,7 +5,8 @@
 #include <memory>
 #include <vector>
 #include "../Socket.h"
-#include "../packets.h"
+#include "../IPPacket.h"
+#include "../ICMPMessage.h"
 
 class Traceroute {
  public:

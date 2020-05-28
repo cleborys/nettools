@@ -13,15 +13,9 @@ struct IPHeaderData {
   size_t byte_length;
   std::string source;
   std::string destination;
-};
 
-struct ICMPMessage {
-  IPHeaderData ip_header;
-  int msgtype;
-  int code;
-  int checksum;
-  int identifier{-1};
-  int sequence_number{-1};
+  IPHeaderData(const iphdr &raw_header);
+  IPHeaderData(const char *buffer);
 };
 
 struct RawBytes {
@@ -30,18 +24,11 @@ struct RawBytes {
   size_t actual_size;
 
   RawBytes(size_t max_size);
-  char *get_bytes() { return buffer.get(); }
+  RawBytes(const std::string &hex_byte_string);
+  char *get() { return buffer.get(); }
   const char *get() const { return buffer.get(); }
 };
 
-std::unique_ptr<const ICMPMessage> parse_at(const RawBytes &bytes,
-                                            size_t start);
-
-std::unique_ptr<icmp> generate_echo_request(int sequence_number,
-                                            int identifier);
-
-std::ostream &operator<<(std::ostream &ostream,
-                         const ICMPMessage &icmp_message);
 std::ostream &operator<<(std::ostream &ostream,
                          const IPHeaderData &ip_header_data);
 

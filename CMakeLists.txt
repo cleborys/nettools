@@ -1,11 +1,18 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.9)
 project(nettools)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
-find_package(Threads)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
 
-add_executable(traceroute traceroute/main.cpp packets.h traceroute/Traceroute.cpp traceroute/Traceroute.h packets.cpp Socket.cpp Socket.h)
-target_link_libraries (traceroute ${CMAKE_THREAD_LIBS_INIT})
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    include(CodeCoverage)
 
-add_executable(dnstrace dnstrace/main.cpp Socket.h Socket.cpp packets.h packets.cpp dnstrace/dns.h dnstrace/dns.cpp dnstrace/DNSQuerier.cpp dnstrace/DNSQuerier.h)
+    SET(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+    SET(CMAKE_C_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+endif ()
+
+add_subdirectory(src)
+
+enable_testing()
+add_subdirectory(test)

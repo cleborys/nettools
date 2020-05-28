@@ -65,7 +65,7 @@ void Socket::send_raw(void *message_begin, size_t message_length,
 
 std::unique_ptr<RawBytes> Socket::read_next() {
   std::unique_ptr<RawBytes> buffer{std::make_unique<RawBytes>(BUFFER_SIZE)};
-  buffer->actual_size = recv(m_socket, buffer->get_bytes(), BUFFER_SIZE - 1, 0);
+  buffer->actual_size = recv(m_socket, buffer->get(), BUFFER_SIZE - 1, 0);
   return std::move(buffer);
 }
 

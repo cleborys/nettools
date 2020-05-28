@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <memory>
 #include <string>
-#include "packets.h"
+#include "IPPacket.h"
 
 class Socket {
  public:
