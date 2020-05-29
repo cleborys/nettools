@@ -20,8 +20,12 @@ before_install:
   - mkdir cmake && travis_retry wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
     sudo ln -s cmake/bin/cmake cmake
   - cmake --version
+  - pwd
+  - ls
 
 script:
+  - pwd
+  - ls
   - mkdir build
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=Debug ..
