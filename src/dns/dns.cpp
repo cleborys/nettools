@@ -54,9 +54,7 @@ size_t copy_dns_name(const unsigned char *reader, const unsigned char *buffer,
     }
   }
 
-  int walk{0};
-  int next_jump{};
-  while (walk < out_name.length()) {
+  for (int walk{0}, next_jump{}; walk < out_name.length();) {
     next_jump = static_cast<int>(out_name[walk]);
     out_name[walk] = '.';
     walk += (next_jump + 1);

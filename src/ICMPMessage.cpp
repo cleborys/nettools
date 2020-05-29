@@ -12,7 +12,7 @@ ICMPMessage::ICMPMessage(const IPHeaderData &header_data, int msgtype, int code,
 
 std::unique_ptr<const ICMPMessage> parse_icmp_at(const RawBytes &bytes,
                                                  size_t start) {
-  if (bytes.actual_size <= 0) {
+  if (bytes.actual_size == 0) {
     std::cerr << "Nothing to read, length: " << bytes.actual_size << '\n';
     return std::unique_ptr<ICMPMessage>(nullptr);
   }
