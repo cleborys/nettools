@@ -18,16 +18,11 @@ before_install:
   - g++ -v 
   - CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.0-Linux-x86_64.tar.gz"
   - mkdir cmake && travis_retry wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
-  - sudo ln -s cmake/bin/cmake cmake
-  - cmake --version
-  - pwd
-  - ls
+  - cmake/bin/cmake --version
 
 script:
-  - pwd
-  - ls
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - ../cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug ..
   - make
   - make coverage
