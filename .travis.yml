@@ -18,7 +18,7 @@ before_install:
   - g++ -v 
   - CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.0-Linux-x86_64.tar.gz"
   - mkdir cmake && travis_retry wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
-    sudo ln -s cmake/bin/cmake cmake
+  - sudo ln -s cmake/bin/cmake cmake
   - cmake --version
   - pwd
   - ls
