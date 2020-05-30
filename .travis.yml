@@ -30,4 +30,4 @@ script:
   - sudo make coverage
 
 after_success:
-  - coveralls --root . -E ".*CMakeFiles.*" -E ".*gtest.*"
+  - coveralls
