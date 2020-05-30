@@ -20,6 +20,7 @@ before_install:
   - CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.0-Linux-x86_64.tar.gz"
   - mkdir cmake && travis_retry wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
   - cmake/bin/cmake --version
+  - pip install --user cpp-coveralls
 
 script:
   - mkdir build
@@ -27,3 +28,6 @@ script:
   - ../cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug ..
   - make
   - sudo make coverage
+
+after_success:
+  - coveralls --root . -E ".*CMakeFiles.*"
