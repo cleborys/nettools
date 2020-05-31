@@ -1,4 +1,11 @@
-### Build ###
+# nettools
+C++ implementation of a few network tools built around C sockets for educative
+purposes.
+
+[![Build Status](https://travis-ci.com/cleborys/nettools.svg?branch=master)](https://travis-ci.com/cleborys/nettools)
+
+## Build ##
+Building requires `cmake` version 3.10 or higher.
 ```bash
 mkdir build
 cd build
@@ -6,7 +13,7 @@ cmake ..
 make
 ```
 
-### Run tests ###
+## Run Tests ##
 Having built as above, run
 ```bash
 ctest -V
@@ -16,4 +23,4 @@ To get coverage metrics, compile as follows:
 cmake -DCMAKE_BUILD_TYPE=Debug ..
 make coverage
 ```
-and inspect `build/coverage/index.html`
+and view `build/coverage/index.html`
