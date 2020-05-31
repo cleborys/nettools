@@ -15,6 +15,9 @@ class Socket {
   Socket(int type, int protocol);
   virtual ~Socket();
 
+  std::unique_ptr<sockaddr_in> parse_sockaddr(const std::string &destination_ip,
+                                              int destination_port);
+
   int m_socket{};
 };
 

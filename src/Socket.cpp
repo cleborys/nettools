@@ -27,6 +27,32 @@ void Socket::set_ttl(const int ttl) {
   }
 }
 
+std::unique_ptr<sockaddr_in> Socket::parse_sockaddr(
+    const std::string &destination_ip, int destination_port) {
+  std::unique_ptr<sockaddr_in> parsed_address{std::make_unique<sockaddr_in>()};
+
+  in_addr destination;
+  if (!inet_aton(destination_ip.c_str(), &destination)) {
+    std::cerr << "Failed to parse IP address " << destination_ip << '\n';
+    throw std::runtime_error("Failed to parse IP address");
+  }
+
+  hostent *remote_host;
+  remote_host = gethostbyaddr(static_cast<const void *>(&destination),
+                              sizeof(destination), AF_INET);
+  if (!remote_host) {
+    std::cerr << "Failed to get host " << destination_ip << "by address\n";
+    throw std::runtime_error("Failed to get host by address");
+  }
+
+  parsed_address->sin_family = AF_INET;
+  memcpy(static_cast<void *>(&(parsed_address->sin_addr)), remote_host->h_addr,
+         remote_host->h_length);
+  parsed_address->sin_port = htons(destination_port);
+
+  return parsed_address;
+}
+
 void DatagramSocket::send_string(const std::string &message,
                                  const std::string &destination_ip,
                                  int destination_port) {
@@ -38,29 +64,11 @@ void DatagramSocket::send_string(const std::string &message,
 void DatagramSocket::send_raw(void *message_begin, size_t message_length,
                               const std::string &destination_ip,
                               int destination_port) {
-  in_addr destination;
-  if (!inet_aton(destination_ip.c_str(), &destination)) {
-    std::cerr << "Failed to parse IP address " << destination_ip << '\n';
-    return;
-  }
-
-  hostent *remote_host;
-  remote_host = gethostbyaddr(static_cast<const void *>(&destination),
-                              sizeof(destination), AF_INET);
-  if (!remote_host) {
-    std::cerr << "Failed to get host " << destination_ip << "by address\n";
-    return;
-  }
-
-  sockaddr_in destination_sockaddr{};
-  destination_sockaddr.sin_family = AF_INET;
-  memcpy(static_cast<void *>(&destination_sockaddr.sin_addr),
-         remote_host->h_addr, remote_host->h_length);
-  destination_sockaddr.sin_port = htons(destination_port);
+  auto destination_sockaddr = parse_sockaddr(destination_ip, destination_port);
 
   if (sendto(m_socket, message_begin, message_length, 0,
-             (sockaddr *)&destination_sockaddr,
-             sizeof(destination_sockaddr)) < 0) {
+             reinterpret_cast<sockaddr *>(destination_sockaddr.get()),
+             sizeof(*destination_sockaddr)) < 0) {
     std::cerr << "Failed to send\n";
   }
 }

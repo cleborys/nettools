@@ -18,9 +18,12 @@ Having built as above, run
 ```bash
 ctest -V
 ```
-To get coverage metrics, compile as follows:
+Note that creating "raw" ports (e.g. for ICMP) requires the appropriate rights,
+so you might have to run `sudo make coverage` for these tests to pass.
+
+To get code coverage metrics, compile as follows:
 ```bash
 cmake -DCMAKE_BUILD_TYPE=Debug ..
 make coverage
 ```
-and view `build/coverage/index.html`
+and view `build/coverage/index.html`.

@@ -7,28 +7,10 @@
 
 void TCPSocket::connect(const std::string &destination_ip,
                         int destination_port) {
-  in_addr destination;
-  if (!inet_aton(destination_ip.c_str(), &destination)) {
-    std::cerr << "Failed to parse IP address " << destination_ip << '\n';
-    return;
-  }
-
-  hostent *remote_host;
-  remote_host = gethostbyaddr(static_cast<const void *>(&destination),
-                              sizeof(destination), AF_INET);
-  if (!remote_host) {
-    std::cerr << "Failed to get host " << destination_ip << "by address\n";
-    return;
-  }
-
-  sockaddr_in destination_sockaddr{};
-  destination_sockaddr.sin_family = AF_INET;
-  memcpy(static_cast<void *>(&destination_sockaddr.sin_addr),
-         remote_host->h_addr, remote_host->h_length);
-  destination_sockaddr.sin_port = htons(destination_port);
-
-  if (::connect(m_socket, reinterpret_cast<sockaddr *>(&destination_sockaddr),
-                sizeof(destination_sockaddr)) != 0) {
+  auto destination_sockaddr = parse_sockaddr(destination_ip, destination_port);
+  if (::connect(m_socket,
+                reinterpret_cast<sockaddr *>(destination_sockaddr.get()),
+                sizeof(*destination_sockaddr)) != 0) {
     std::cerr << "Failed to connect to host " << destination_ip << " on port "
               << destination_port << '\n';
     return;
