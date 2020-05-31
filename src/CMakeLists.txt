@@ -19,10 +19,11 @@ set(LIBRARY_FILES
         dns/DNSQuerier.h
         )
 add_library(libnettools ${LIBRARY_FILES})
+target_link_libraries(libnettools ${CMAKE_THREAD_LIBS_INIT})
 
 
 add_executable(traceroute traceroute/main.cpp)
-target_link_libraries (traceroute ${CMAKE_THREAD_LIBS_INIT} libnettools)
+target_link_libraries(traceroute libnettools)
 
 add_executable(dns dns/main.cpp )
 target_link_libraries(dns libnettools)

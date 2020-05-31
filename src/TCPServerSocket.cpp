@@ -26,14 +26,31 @@ TCPServerSocket::TCPServerSocket(int port) : TCPSocket() {
 }
 
 void TCPServerSocket::accept_connections() {
+  if (connection_event_loop) {
+    std::cout << "Already running.\n";
+    return;
+  }
   listen(m_socket, 5);
   std::cout << "Listening...\n";
 
+  running = true;
+  connection_event_loop = std::make_unique<std::future<void>>(
+      std::async(&TCPServerSocket::handle_connection_events, this));
+}
+
+void TCPServerSocket::shutdown() {
+  running = false;
+  if (connection_event_loop) {
+    connection_event_loop->wait();
+    connection_event_loop.reset();
+  }
+}
+
+void TCPServerSocket::handle_connection_events() {
   fd_set connection_descriptors;
   timeval timeout;
   timeout.tv_sec = 1;
   timeout.tv_usec = 0;
-  running = true;
   while (running) {
     FD_ZERO(&connection_descriptors);
 

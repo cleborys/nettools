@@ -5,10 +5,8 @@
 TEST(TCPServerSocketTest, simple_echo) {
   int server_port{8080};
   TCPServerSocket server_socket{server_port};
-  auto server_future =
-      std::async(&TCPServerSocket::accept_connections, &server_socket);
+  server_socket.accept_connections();
 
-  sleep(1);
   {
     TCPSocket client_socket{};
     client_socket.connect("127.0.0.1", server_port);
@@ -22,16 +20,13 @@ TEST(TCPServerSocketTest, simple_echo) {
   }
 
   server_socket.shutdown();
-  server_future.wait();
 }
 
 TEST(TCPServerSocketTest, connecting_several_times) {
   int server_port{8080};
   TCPServerSocket server_socket{server_port};
-  auto server_future =
-      std::async(&TCPServerSocket::accept_connections, &server_socket);
+  server_socket.accept_connections();
 
-  sleep(1);
   for (int i{0}; i < 10; ++i) {
     TCPSocket client_socket{};
     client_socket.connect("127.0.0.1", server_port);
@@ -45,16 +40,13 @@ TEST(TCPServerSocketTest, connecting_several_times) {
   }
 
   server_socket.shutdown();
-  server_future.wait();
 }
 
 TEST(TCPServerSocketTest, simultaneous_connections) {
   int server_port{8080};
   TCPServerSocket server_socket{server_port};
-  auto server_future =
-      std::async(&TCPServerSocket::accept_connections, &server_socket);
+  server_socket.accept_connections();
 
-  sleep(1);
   {
     TCPSocket client_one{};
     TCPSocket client_two{};
@@ -75,5 +67,4 @@ TEST(TCPServerSocketTest, simultaneous_connections) {
   }
 
   server_socket.shutdown();
-  server_future.wait();
 }

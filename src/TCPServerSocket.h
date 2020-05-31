@@ -8,12 +8,14 @@ class TCPServerSocket : private TCPSocket {
  public:
   TCPServerSocket(int port);
   void accept_connections();
-  void shutdown() { running = false; }
+  void shutdown();
 
  private:
   std::array<int, 30> client_sockets{};
   std::atomic_bool running{false};
+  std::unique_ptr<std::future<void>> connection_event_loop{nullptr};
 
+  void handle_connection_events();
   void handle_new_connection();
   void handle_existing_connection(int &client_socket);
   void disconnect(int &client_socket);
