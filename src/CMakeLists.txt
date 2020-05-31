@@ -7,6 +7,8 @@ set(LIBRARY_FILES
         Socket.h
         TCPSocket.cpp
         TCPSocket.h
+        TCPServerSocket.cpp
+        TCPServerSocket.h
         ICMPMessage.cpp
         ICMPMessage.h
         traceroute/Traceroute.cpp
@@ -27,3 +29,6 @@ target_link_libraries(dns libnettools)
 
 add_executable(tcp_client tcp_client/main.cpp )
 target_link_libraries(tcp_client libnettools)
+
+add_executable(tcp_server tcp_server/main.cpp )
+target_link_libraries(tcp_server libnettools)

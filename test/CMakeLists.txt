@@ -35,6 +35,7 @@ set(test_files
     DNSQuerierTest.cpp
     TracerouteIntegrationTest.cpp
     TCPSocketTest.cpp
+    TCPServerSocketTest.cpp
     )
 
 add_executable(tests ${test_files} main.cpp)
