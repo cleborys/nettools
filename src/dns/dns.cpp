@@ -9,7 +9,7 @@ void write_hostname(const std::string &hostname, unsigned char *dns_query_ptr) {
   }
 
   int written_so_far{0};
-  for (int lookahead{0}; lookahead < hostname.size(); ++lookahead) {
+  for (size_t lookahead{0}; lookahead < hostname.size(); ++lookahead) {
     if (hostname[lookahead] != '.') {
       continue;
     }
@@ -17,7 +17,7 @@ void write_hostname(const std::string &hostname, unsigned char *dns_query_ptr) {
     // like 3, 6, 3 in 3www6google3com
     *dns_query_ptr++ = lookahead - written_so_far;
     // write letters until current '.'
-    while (written_so_far < lookahead) {
+    while (written_so_far < static_cast<int>(lookahead)) {
       *dns_query_ptr = hostname[written_so_far];
       dns_query_ptr += 1;
       written_so_far += 1;
@@ -54,7 +54,7 @@ size_t copy_dns_name(const unsigned char *reader, const unsigned char *buffer,
     }
   }
 
-  for (int walk{0}, next_jump{}; walk < out_name.length();) {
+  for (size_t walk{0}, next_jump{}; walk < out_name.length();) {
     next_jump = static_cast<int>(out_name[walk]);
     out_name[walk] = '.';
     walk += (next_jump + 1);
@@ -84,5 +84,7 @@ std::ostream &operator<<(std::ostream &ostream,
           << "type: " << ntohs(record_header.type) << '\n'
           << "ttl: " << ntohl(record_header.ttl) << '\n'
           << "length: " << ntohs(record_header.resource_data_length) << '\n';
+
+  return ostream;
 }
 // LCOV_EXCL_STOP

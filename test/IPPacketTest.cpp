@@ -9,6 +9,6 @@ TEST(IPPacketTest, parse_ip_header) {
   EXPECT_EQ(ip_header.ttl, 52);
   EXPECT_EQ(ip_header.source, "8.8.8.8");
   EXPECT_EQ(ip_header.destination, "192.168.0.11");
-  EXPECT_EQ(ip_header.byte_length, 20);
+  EXPECT_EQ(static_cast<int>(ip_header.byte_length), 20);
   EXPECT_EQ(ip_header.protocol, IPPROTO_ICMP);
 }

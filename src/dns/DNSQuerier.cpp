@@ -47,6 +47,11 @@ std::string DNSQuerier::parse_reply(int domain_name_length) {
   const DnsHeader *received_dns_header =
       reinterpret_cast<const DnsHeader *>(received_bytes->buffer.get());
 
+  if (received_dns_header->answer_count == 0) {
+    std::cout << "Received no answer\n";
+    throw std::runtime_error("DNSQuerier received no answer");
+  }
+
   const unsigned char *reader = reinterpret_cast<unsigned char *>(
       received_bytes->buffer.get() + sizeof(DnsHeader) +
       (domain_name_length + 1) + sizeof(QueryInfo));

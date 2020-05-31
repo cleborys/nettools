@@ -4,8 +4,8 @@
 
 IPHeaderData::IPHeaderData(const iphdr &raw_header)
     : ttl{static_cast<int>(raw_header.ttl)},
-      byte_length{static_cast<size_t>(raw_header.ihl * 4)},
-      protocol{static_cast<int>(raw_header.protocol)} {
+      protocol{static_cast<int>(raw_header.protocol)},
+      byte_length{static_cast<size_t>(raw_header.ihl * 4)} {
   in_addr source_addr, dest_addr;
   source_addr.s_addr = raw_header.saddr;
   dest_addr.s_addr = raw_header.daddr;
@@ -33,10 +33,9 @@ std::ostream &operator<<(std::ostream &ostream,
 // LCOV_EXCL_STOP
 
 RawBytes::RawBytes(size_t max_size)
-    : max_size{max_size},
-      actual_size{0},
-      buffer{std::make_unique<char[]>(max_size + 1)} {
-}  // use one more byte to double as a c_string
+    : buffer{std::make_unique<char[]>(max_size + 1)},
+      max_size{max_size},
+      actual_size{0} {}  // use one more byte to double as a c_string
 
 RawBytes::RawBytes(const std::string &hex_byte_string)
     : RawBytes((hex_byte_string.size() + 1) / 3) {
