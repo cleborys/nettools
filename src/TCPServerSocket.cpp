@@ -122,10 +122,10 @@ void TCPServerSocket::handle_new_connection() {
 
 void TCPServerSocket::handle_existing_connection(int &client_socket) {
   RawBytes read_data{1024};
-  std::size_t read_length{static_cast<size_t>(
-      read(client_socket, read_data.get_buffer(), read_data.max_size))};
+  auto read_length{
+      read(client_socket, read_data.get_buffer(), read_data.max_size)};
 
-  if (read_length == 0) {  // Connection closed
+  if (read_length <= 0) {  // Connection closed
     disconnect(client_socket);
     return;
   }
