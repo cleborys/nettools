@@ -41,10 +41,10 @@ void TCPSocket::send_cstring(const char *cstring) {
   }
 }
 
-TCPSocket *TCPSocket::operator<<(const std::string &message) {
+TCPSocket &TCPSocket::operator<<(const std::string &message) {
   const char *cstring{message.c_str()};
   send_cstring(cstring);
-  return this;
+  return *this;
 }
 
 std::unique_ptr<RawBytes> TCPSocket::read_bytes(size_t max_bytes_read) {
