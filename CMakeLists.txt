@@ -5,12 +5,12 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    include(CodeCoverage)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  include(CodeCoverage)
 
-    SET(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
-    SET(CMAKE_C_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
-endif ()
+  set(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+  set(CMAKE_C_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+endif()
 
 add_subdirectory(src)
 
