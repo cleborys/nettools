@@ -18,7 +18,7 @@ Having built as above, run
 ```bash
 ctest -V
 ```
-Note that creating "raw" ports (e.g. for ICMP) requires the appropriate rights,
+Note that creating "raw" sockets (e.g. for ICMP) requires the appropriate rights,
 so you might have to run `sudo make coverage` for these tests to pass.
 
 To get code coverage metrics, compile as follows:
