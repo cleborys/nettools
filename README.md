@@ -19,7 +19,7 @@ Having built as above, run
 ctest -V
 ```
 Note that creating "raw" sockets (e.g. for ICMP) requires the appropriate rights,
-so you might have to run `sudo make coverage` for these tests to pass.
+so you might have to run `sudo ctest -V` for these tests to pass.
 
 To get code coverage metrics, compile as follows:
 ```bash
