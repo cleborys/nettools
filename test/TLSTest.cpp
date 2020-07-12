@@ -23,8 +23,6 @@ TEST(TLSClientHelloTest, simple_hello) {
 
   EXPECT_EQ(byte_string.substr(0, 2),
             "01");  // type
-  EXPECT_EQ(byte_string.substr(3, 8),
-            "00 00 32");  // length
   EXPECT_EQ(byte_string.substr(12, 5),
             "03 03");  // protocol
   EXPECT_EQ(byte_string.substr(114, 2),
@@ -33,8 +31,6 @@ TEST(TLSClientHelloTest, simple_hello) {
             "00 02 13 01");  // one standard cipher suite
   EXPECT_EQ(byte_string.substr(129, 5),
             "01 00");  // one standard cipher suite
-  EXPECT_EQ(byte_string.substr(135, 5),
-            "00 07");  // only a single extension
   EXPECT_EQ(byte_string.substr(141, 20),
             "00 2b 00 03 02 03 04");  // supported_versions only TLSv1.3
 }
