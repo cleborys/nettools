@@ -9,6 +9,7 @@ class TCPSocket : public Socket {
 
   void connect(const std::string& destination_ip, int destination_port);
   void send_cstring(const char* cstring);
+  void send_raw_bytes(const RawBytes& raw_bytes);
   TCPSocket& operator<<(const std::string& message);
 
   std::unique_ptr<RawBytes> read_bytes(size_t max_bytes_read);

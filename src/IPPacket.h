@@ -25,8 +25,16 @@ struct RawBytes {
 
   RawBytes(size_t max_size);
   RawBytes(const std::string &hex_byte_string);
+
   char *get_buffer() { return buffer.get(); }
   const char *get_buffer() const { return buffer.get(); }
+
+  void push_back(char byte);
+  void push_back(uint16_t two_bytes);
+  void copy_from(const RawBytes &original);
+  void append_from(const RawBytes &original);
+
+  std::string to_hex_byte_string() const;
 };
 
 std::ostream &operator<<(std::ostream &ostream,

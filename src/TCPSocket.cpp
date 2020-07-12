@@ -23,6 +23,12 @@ void TCPSocket::send_cstring(const char *cstring) {
   }
 }
 
+void TCPSocket::send_raw_bytes(const RawBytes &raw_bytes) {
+  if (write(m_socket, raw_bytes.get_buffer(), raw_bytes.actual_size) < 0) {
+    std::cerr << "Failed to write to socket.\n";
+  }
+}
+
 TCPSocket &TCPSocket::operator<<(const std::string &message) {
   const char *cstring{message.c_str()};
   send_cstring(cstring);

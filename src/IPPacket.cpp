@@ -1,5 +1,6 @@
 #include "IPPacket.h"
 #include <arpa/inet.h>
+#include <iomanip>
 #include <sstream>
 
 IPHeaderData::IPHeaderData(const iphdr &raw_header)
@@ -48,4 +49,62 @@ RawBytes::RawBytes(const std::string &hex_byte_string)
     *(byte_ptr) = next_byte;
     byte_ptr += 1;
   }
+}
+
+void RawBytes::push_back(char byte) {
+  if (actual_size + 1 > max_size) {
+    throw std::runtime_error("out of bounds");
+  }
+
+  char *write_ptr{get_buffer() + actual_size};
+  *write_ptr = byte;
+  actual_size += 1;
+}
+
+void RawBytes::push_back(uint16_t two_bytes) {
+  push_back(static_cast<char>((two_bytes & 0xff00) >> 8));
+  push_back(static_cast<char>(two_bytes & 0x00ff));
+}
+
+void RawBytes::copy_from(const RawBytes &original) {
+  if (original.actual_size > max_size) {
+    throw std::runtime_error("length out of bounds to copy");
+  }
+  const char *read_ptr{original.get_buffer()};
+  const char *end_ptr{original.get_buffer() + original.actual_size};
+  actual_size = 0;
+  while (read_ptr < end_ptr) {
+    push_back(static_cast<char>(*read_ptr++));
+  }
+}
+
+void RawBytes::append_from(const RawBytes &original) {
+  if (actual_size + original.actual_size > max_size) {
+    throw std::runtime_error("length out of bounds to append");
+  }
+  const char *read_ptr{original.get_buffer()};
+  const char *end_ptr{original.get_buffer() + original.actual_size};
+  while (read_ptr < end_ptr) {
+    push_back(*read_ptr++);
+  }
+}
+
+std::string RawBytes::to_hex_byte_string() const {
+  std::ostringstream convert;
+
+  const char *read_ptr{get_buffer()};
+  const char *end_ptr{get_buffer() + actual_size};
+
+  while (read_ptr < end_ptr) {
+    convert << std::noshowbase << std::hex << std::setfill('0') << std::setw(2);
+    convert << static_cast<int>(static_cast<unsigned char>(*(read_ptr++)))
+            << ' ';
+  }
+
+  std::string return_string{convert.str()};
+  if (return_string.size() > 0) {
+    return_string.pop_back();
+  }
+
+  return return_string;
 }

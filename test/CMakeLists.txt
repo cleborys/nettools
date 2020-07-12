@@ -33,6 +33,7 @@ set(test_files
     DNSTest.cpp
     DNSQuerierTest.cpp
     TracerouteIntegrationTest.cpp
+    TLSTest.cpp
     TCPSocketTest.cpp
     TCPServerSocketTest.cpp)
 
