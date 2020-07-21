@@ -32,10 +32,12 @@ set(test_files
     IPPacketTest.cpp
     DNSTest.cpp
     DNSQuerierTest.cpp
+    FieldElementTest.cpp
     TracerouteIntegrationTest.cpp
     TLSTest.cpp
     TCPSocketTest.cpp
-    TCPServerSocketTest.cpp)
+    TCPServerSocketTest.cpp
+    X25519Test.cpp)
 
 add_executable(tests ${test_files} main.cpp)
 target_link_libraries(tests libgtest libgmock ${CMAKE_THREAD_LIBS_INIT}

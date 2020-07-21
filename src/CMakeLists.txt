@@ -13,6 +13,10 @@ set(LIBRARY_FILES
     ICMPMessage.h
     traceroute/Traceroute.cpp
     traceroute/Traceroute.h
+    crypto/Curve25519.cpp
+    crypto/Curve25519.h
+    crypto/FieldElement.cpp
+    crypto/FieldElement.h
     dns/dns.h
     dns/dns.cpp
     dns/DNSQuerier.cpp
