@@ -6,6 +6,8 @@
  * =================================================================
  *                             Caution:
  * THIS IMPLEMENTATION IS LIKELY VULNERABLE TO SIDE-CHANNEL ATTACKS!
+ * It is also somewhat slow, since it creates a *lot* of objects,
+ * one with every arithmetic operation.
  * =================================================================
  *
  * see https://tools.ietf.org/html/rfc7748

@@ -44,6 +44,8 @@ class FieldElement {
 
   FieldElement mask_most_significant_bit() const;
   FieldElement prepare_scalar() const;  // see page 7 of RFC 7748
+  bool is_zero_constant_time() const;
+
  private:
   void add_inplace_without_normalization(const FieldElement &other);
 };

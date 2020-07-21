@@ -271,3 +271,12 @@ FieldElement FieldElement::prepare_scalar() const {
 
   return result;
 }
+
+bool FieldElement::is_zero_constant_time() const {
+  bool have_seen_a_set_bit{false};
+  for (size_t i{0}; i < FIELD_SIZE; ++i) {
+    have_seen_a_set_bit |= this->bit_at(i);
+  }
+
+  return !have_seen_a_set_bit;
+}

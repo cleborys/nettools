@@ -133,3 +133,11 @@ TEST(FieldElementTest, from_hex_byte_string) {
 
   EXPECT_EQ(element.to_string(), hex_bytes);
 }
+
+TEST(FieldElementTest, is_zero) {
+  FieldElement zero{0};
+  FieldElement not_zero{0x374382};
+
+  EXPECT_EQ(zero.is_zero_constant_time(), true);
+  EXPECT_EQ(not_zero.is_zero_constant_time(), false);
+}
