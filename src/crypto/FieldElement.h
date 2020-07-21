@@ -16,7 +16,7 @@
  * except the LSB which is 0xda = 11011010
  */
 
-inline constexpr size_t FIELD_SIZE{32};
+constexpr size_t FIELD_SIZE{32};
 
 class FieldElement {
   std::array<std::uint8_t, FIELD_SIZE> bytes;
