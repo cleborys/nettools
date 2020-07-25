@@ -22,10 +22,14 @@ set(LIBRARY_FILES
     dns/DNSQuerier.cpp
     dns/DNSQuerier.h
     tls/handshake.h
-    tls/TLSClientHello.h
-    tls/TLSClientHello.cpp
+    tls/TLSHandshakeMessage.h
+    tls/TLSHandshakeMessage.cpp
     tls/TLSRecord.h
-    tls/TLSRecord.cpp)
+    tls/TLSRecord.cpp
+    tls/TLSExtension.cpp
+    tls/TLSExtension.h
+    tls/TLSEnums.h
+)
 add_library(libnettools ${LIBRARY_FILES})
 target_link_libraries(libnettools ${CMAKE_THREAD_LIBS_INIT})
 

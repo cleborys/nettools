@@ -36,3 +36,12 @@ std::unique_ptr<RawBytes> TLSRecord::get_raw() {
 
   return return_bytes_ptr;
 }
+
+std::unique_ptr<TLSRecord> readTLSRecord(TCPSocket &socket) {
+  auto raw_info{socket.read_bytes(5)};
+  std::uint16_t content_length{raw_info->read_two_bytes_at(3)};
+  auto raw_content{socket.read_bytes(content_length)};
+  return std::make_unique<TLSRecord>(ContentType(raw_info->read_byte_at(0)),
+                                     raw_info->read_two_bytes_at(1),  // version
+                                     *raw_content);
+}

@@ -1,4 +1,4 @@
-#include <tls/TLSClientHello.h>
+#include <tls/TLSHandshakeMessage.h>
 #include "gtest/gtest.h"
 #include "tls/TLSRecord.h"
 
@@ -17,7 +17,7 @@ TEST(TLSRecordTest, get_raw) {
 }
 
 TEST(TLSClientHelloTest, simple_hello) {
-  TLSClientHello client_hello{};
+  TLSHandshakeMessage client_hello{};
   auto payload_ptr{client_hello.get_raw()};
   auto byte_string{payload_ptr->to_hex_byte_string()};
 

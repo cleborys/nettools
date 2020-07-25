@@ -1,6 +1,6 @@
 #include "../IPPacket.h"
 #include "../TCPSocket.h"
-#include "TLSClientHello.h"
+#include "TLSHandshakeMessage.h"
 #include "TLSRecord.h"
 
 int main(int argc, char* argv[]) {
@@ -20,14 +20,19 @@ int main(int argc, char* argv[]) {
 
   socket.connect(destination_ip, destination_port);
 
-  TLSClientHello client_hello{};
+  TLSHandshakeMessage client_hello{};
+  std::cout << "Client key share: "
+            << client_hello.find_key_share()->to_hex_byte_string() << '\n';
+
   auto payload_ptr{client_hello.get_raw()};
   TLSRecord record{ContentType_HANDSHAKE, 0x0301, *payload_ptr};
-
   socket.send_raw_bytes(*record.get_raw());
-  auto bytes_ptr = socket.read_bytes(15);
-  std::cout << bytes_ptr->get_buffer();
-  std::cout << "enter to terminate\n";
-  std::cin.get();
+
+  std::unique_ptr<TLSRecord> server_hello_record{readTLSRecord(socket)};
+  TLSHandshakeMessage server_hello{server_hello_record->get_fragment()};
+
+  std::cout << server_hello << '\n';
+  std::cout << "Server key share: "
+            << server_hello.find_key_share()->to_hex_byte_string() << '\n';
   return 0;
 }

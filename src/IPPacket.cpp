@@ -6,7 +6,7 @@
 IPHeaderData::IPHeaderData(const iphdr &raw_header)
     : ttl{static_cast<int>(raw_header.ttl)},
       protocol{static_cast<int>(raw_header.protocol)},
-      byte_length{static_cast<size_t>(raw_header.ihl * 4)} {
+      byte_length{static_cast<std::size_t>(raw_header.ihl * 4)} {
   in_addr source_addr, dest_addr;
   source_addr.s_addr = raw_header.saddr;
   dest_addr.s_addr = raw_header.daddr;
@@ -33,7 +33,7 @@ std::ostream &operator<<(std::ostream &ostream,
 }
 // LCOV_EXCL_STOP
 
-RawBytes::RawBytes(size_t max_size)
+RawBytes::RawBytes(std::size_t max_size)
     : buffer{std::make_unique<char[]>(max_size + 1)},
       max_size{max_size},
       actual_size{0} {}  // use one more byte to double as a c_string
@@ -61,7 +61,7 @@ void RawBytes::push_back(char byte) {
   actual_size += 1;
 }
 
-void RawBytes::push_back(uint16_t two_bytes) {
+void RawBytes::push_back(std::uint16_t two_bytes) {
   push_back(static_cast<char>((two_bytes & 0xff00) >> 8));
   push_back(static_cast<char>(two_bytes & 0x00ff));
 }
@@ -87,6 +87,30 @@ void RawBytes::append_from(const RawBytes &original) {
   while (read_ptr < end_ptr) {
     push_back(*read_ptr++);
   }
+}
+
+std::uint8_t RawBytes::read_byte_at(std::size_t position) const {
+  if (actual_size <= position) {
+    std::runtime_error("Position out of bounds");
+  }
+  return static_cast<std::uint8_t>(buffer[position]);
+}
+
+std::uint16_t RawBytes::read_two_bytes_at(std::size_t position) const {
+  if (actual_size <= position + 1) {
+    std::runtime_error("Position out of bounds");
+  }
+  return static_cast<std::uint16_t>(buffer[position] << 8 |
+                                    buffer[position + 1]);
+}
+
+std::uint32_t RawBytes::read_three_bytes_at(std::size_t position) const {
+  if (actual_size <= position + 2) {
+    std::runtime_error("Position out of bounds");
+  }
+  return static_cast<std::uint32_t>(buffer[position] << 16 |
+                                    buffer[position + 1] << 8 |
+                                    buffer[position + 2]);
 }
 
 std::string RawBytes::to_hex_byte_string() const {

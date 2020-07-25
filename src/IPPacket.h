@@ -10,7 +10,7 @@
 struct IPHeaderData {
   int ttl;
   int protocol;
-  size_t byte_length;
+  std::size_t byte_length;
   std::string source;
   std::string destination;
 
@@ -20,19 +20,23 @@ struct IPHeaderData {
 
 struct RawBytes {
   std::unique_ptr<char[]> buffer;
-  size_t max_size;
-  size_t actual_size;
+  std::size_t max_size;
+  std::size_t actual_size;
 
-  RawBytes(size_t max_size);
+  RawBytes(std::size_t max_size);
   RawBytes(const std::string &hex_byte_string);
 
   char *get_buffer() { return buffer.get(); }
   const char *get_buffer() const { return buffer.get(); }
 
   void push_back(char byte);
-  void push_back(uint16_t two_bytes);
+  void push_back(std::uint16_t two_bytes);
   void copy_from(const RawBytes &original);
   void append_from(const RawBytes &original);
+
+  std::uint8_t read_byte_at(std::size_t position) const;
+  std::uint16_t read_two_bytes_at(std::size_t position) const;
+  std::uint32_t read_three_bytes_at(std::size_t position) const;
 
   std::string to_hex_byte_string() const;
 };

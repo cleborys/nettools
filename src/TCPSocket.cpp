@@ -37,7 +37,7 @@ TCPSocket &TCPSocket::operator<<(const std::string &message) {
 
 std::unique_ptr<RawBytes> TCPSocket::read_bytes(size_t max_bytes_read) {
   auto bytes_ptr{std::make_unique<RawBytes>(max_bytes_read)};
-  read(m_socket, bytes_ptr->get_buffer(), max_bytes_read);
-  bytes_ptr->actual_size = strlen(bytes_ptr->get_buffer());
-  return std::move(bytes_ptr);
+  bytes_ptr->actual_size =
+      read(m_socket, bytes_ptr->get_buffer(), max_bytes_read);
+  return bytes_ptr;
 }
