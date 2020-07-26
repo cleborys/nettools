@@ -2,7 +2,7 @@
 #include <iomanip>
 
 TLSHandshakeMessage::TLSHandshakeMessage(const KeyShare &key_share)
-    : handshake_type{1},       // client hello
+    : handshake_type{HandshakeType_client_hello},
       legacy_version{0x0303},  // TLSv1.2 for compatibility
       cipher_suites{CipherSuite_TLS_AES_128_GCM_SHA256},
       legacy_compression_methods{0},
