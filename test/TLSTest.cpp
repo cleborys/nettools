@@ -17,7 +17,8 @@ TEST(TLSRecordTest, get_raw) {
 }
 
 TEST(TLSClientHelloTest, simple_hello) {
-  TLSHandshakeMessage client_hello{};
+  KeyShare key_share{FieldElement(0)};
+  TLSHandshakeMessage client_hello{key_share};
   auto payload_ptr{client_hello.get_raw()};
   auto byte_string{payload_ptr->to_hex_byte_string()};
 

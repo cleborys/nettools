@@ -37,7 +37,8 @@ set(test_files
     TLSTest.cpp
     TCPSocketTest.cpp
     TCPServerSocketTest.cpp
-    X25519Test.cpp)
+    X25519Test.cpp
+    )
 
 add_executable(tests ${test_files} main.cpp)
 target_link_libraries(tests libgtest libgmock ${CMAKE_THREAD_LIBS_INIT}

@@ -1,6 +1,9 @@
 #include "TLSExtension.h"
 #include <map>
 
+KeyShare::KeyShare(const FieldElement &field_element)
+    : data{field_element.to_string()} {}
+
 TLSExtension::TLSExtension(ExtensionType type,
                            std::size_t extension_data_length)
     : type{type}, extension_data{extension_data_length} {}
@@ -21,8 +24,21 @@ TLSExtension::TLSExtension(ExtensionType type)
       make_supported_versions();
       break;
     case ExtensionType_key_share:
-      make_key_share();
-      break;
+      throw std::runtime_error("Need to provide key_share.");
+  }
+}
+
+TLSExtension::TLSExtension(const KeyShare &key_share)
+    : type{ExtensionType_key_share}, extension_data{64} {
+  extension_data.push_back(
+      static_cast<std::uint16_t>(0x0026));  // length: 2 + 2 + 2 + 32
+  extension_data.push_back(static_cast<std::uint16_t>(
+      0x0024));  // length of client key share: 2 + 2 + 32
+  extension_data.push_back(static_cast<std::uint16_t>(SupportedGroups_x25519));
+  extension_data.push_back(
+      static_cast<std::uint16_t>(0x0020));  // keyshare length: 32 bytes
+  for (int i{0}; i < 16; ++i) {
+    extension_data.push_back(key_share.data.read_two_bytes_at(2 * i));
   }
 }
 
@@ -45,21 +61,6 @@ void TLSExtension::make_supported_versions() {
   extension_data.push_back(
       static_cast<char>(0x02));  // supported versions list length
   extension_data.push_back(static_cast<std::uint16_t>(0x0304));  // TLSv1.3
-}
-
-void TLSExtension::make_key_share() {
-  extension_data.push_back(
-      static_cast<std::uint16_t>(0x0026));  // length: 2 + 2 + 2 + 32
-  extension_data.push_back(static_cast<std::uint16_t>(
-      0x0024));  // length of client key share: 2 + 2 + 32
-  extension_data.push_back(static_cast<std::uint16_t>(SupportedGroups_x25519));
-  extension_data.push_back(
-      static_cast<std::uint16_t>(0x0020));  // keyshare length: 32 bytes
-  // NOT USEFUl
-  for (int i{0}; i < 16; ++i) {
-    extension_data.push_back(
-        static_cast<std::uint16_t>(rand()));  // append two random bytes
-  }
 }
 
 std::unique_ptr<RawBytes> TLSExtension::get_key_share(bool from_client) const {

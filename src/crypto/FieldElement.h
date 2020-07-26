@@ -2,6 +2,7 @@
 #define NETTOOLS_SRC_TCP_SERVER_FIELDELEMENT_H_
 
 #include <array>
+#include <random>
 
 /* Support for calculations in f25519
  * encoded as little endian arrays of size 32
@@ -22,6 +23,7 @@ class FieldElement {
   std::array<std::uint8_t, FIELD_SIZE> bytes;
 
  public:
+  FieldElement(std::mt19937 &mersenne_twister);  // random value
   FieldElement(std::uint32_t value);
   FieldElement(const FieldElement &original);
   FieldElement(const std::string &hex_byte_string);

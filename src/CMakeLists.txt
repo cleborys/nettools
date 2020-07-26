@@ -21,7 +21,6 @@ set(LIBRARY_FILES
     dns/dns.cpp
     dns/DNSQuerier.cpp
     dns/DNSQuerier.h
-    tls/handshake.h
     tls/TLSHandshakeMessage.h
     tls/TLSHandshakeMessage.cpp
     tls/TLSRecord.h
@@ -29,7 +28,8 @@ set(LIBRARY_FILES
     tls/TLSExtension.cpp
     tls/TLSExtension.h
     tls/TLSEnums.h
-)
+    tls/DiffieHellman.cpp
+    tls/DiffieHellman.h)
 add_library(libnettools ${LIBRARY_FILES})
 target_link_libraries(libnettools ${CMAKE_THREAD_LIBS_INIT})
 

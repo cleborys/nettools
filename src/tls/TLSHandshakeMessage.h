@@ -17,7 +17,7 @@ class TLSHandshakeMessage {
   std::vector<TLSExtension> extensions;
 
  public:
-  TLSHandshakeMessage();
+  TLSHandshakeMessage(const KeyShare& key_share);
   TLSHandshakeMessage(const RawBytes& raw_message);
   std::unique_ptr<RawBytes> get_raw() const;
   friend std::ostream& operator<<(std::ostream& ostream,

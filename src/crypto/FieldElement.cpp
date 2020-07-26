@@ -2,6 +2,13 @@
 #include <iomanip>
 #include <sstream>
 
+FieldElement::FieldElement(std::mt19937 &mersenne_twister) : bytes{} {
+  std::uniform_int_distribution generator{0, 255};
+  for (size_t walk{0}; walk < FIELD_SIZE; ++walk) {
+    bytes[walk] = static_cast<std::uint8_t>(generator(mersenne_twister));
+  }
+}
+
 FieldElement::FieldElement(std::uint32_t value) : bytes{} {
   size_t walk{0};
   while (value > 0) {

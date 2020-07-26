@@ -1,7 +1,7 @@
 #include "TLSHandshakeMessage.h"
 #include <iomanip>
 
-TLSHandshakeMessage::TLSHandshakeMessage()
+TLSHandshakeMessage::TLSHandshakeMessage(const KeyShare &key_share)
     : handshake_type{1},       // client hello
       legacy_version{0x0303},  // TLSv1.2 for compatibility
       cipher_suites{CipherSuite_TLS_AES_128_GCM_SHA256},
@@ -10,7 +10,7 @@ TLSHandshakeMessage::TLSHandshakeMessage()
   extensions.push_back(TLSExtension(ExtensionType_supported_versions));
   extensions.push_back(TLSExtension(ExtensionType_supported_groups));
   extensions.push_back(TLSExtension(ExtensionType_signature_algorithms));
-  extensions.push_back(TLSExtension(ExtensionType_key_share));
+  extensions.push_back(TLSExtension(key_share));
 
   // NOT SECURE
   for (std::uint8_t *write_ptr{random}; write_ptr < random + 32; ++write_ptr) {
